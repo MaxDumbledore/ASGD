@@ -5,9 +5,19 @@
 #ifndef ASGD_SERVER_H
 #define ASGD_SERVER_H
 
+#include <asio.hpp>
+#include <asio/ssl.hpp>
 
 class Server {
+public:
+    Server(asio::io_context &ioContext, uint16_t port);
 
+private:
+    asio::ip::tcp::acceptor tcpAcceptor;
+    asio::ssl::context sslContext;
+    SessionManager sessionManager;
+
+    void doAccept();
 };
 
 
