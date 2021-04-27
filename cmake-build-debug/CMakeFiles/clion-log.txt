@@ -1,6 +1,0 @@
-/home/max/softwares/clion-2019.2.2/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -G "CodeBlocks - Unix Makefiles" /home/max/CLionProjects/ASGD
--- Microsoft SEAL -> Version 3.6.4 detected
--- Microsoft SEAL -> Targets available: SEAL::seal
--- Configuring done
--- Generating done
--- Build files have been written to: /home/max/CLionProjects/ASGD/cmake-build-debug
