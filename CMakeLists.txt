@@ -4,6 +4,7 @@ project(ASGD)
 set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_PREFIX_PATH /home/max/libtorch/ /home/max/SEAL/build)
+include_directories(/home/max/asio-1.18.1/include)
 find_package(Torch REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(SEAL REQUIRED)
