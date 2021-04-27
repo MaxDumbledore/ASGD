@@ -4,6 +4,7 @@
 #include "Client.h"
 
 int main(int argc, char *argv[]) {
+    cout<<"welcome"<<endl;
     try {
         if (argc <= 1 || (strcmp(argv[1], "-c") && strcmp(argv[1], "-s"))) {
             std::cerr << argv[1];
