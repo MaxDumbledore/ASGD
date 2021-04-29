@@ -4,6 +4,7 @@
 
 #include "Session.h"
 #include "SessionManager.h"
+#include "Utils.h"
 #include <iostream>
 
 using namespace std;
@@ -18,15 +19,29 @@ void Session::start() {
 }
 
 void Session::handshake() {
+    auto self(shared_from_this());
     socket.async_handshake(asio::ssl::stream_base::server,
-                           [this](const std::error_code &error) {
-                               if (!error)
-                                   manager.stop(shared_from_this());
-                               else
-                                   cerr << error.message() << endl;
+                           [this, self](const asio::error_code &error) {
+                               if (!error) {
+                                   sendIdAndParams();
+                                   std::clog << "handshake succeeded!" << std::endl;
+                               } else
+                                   std::cerr << error.message() << std::endl;
                            });
 }
 
 void Session::stop() {
     socket.shutdown();
+}
+
+void Session::sendIdAndParams() {
+    auto self(shared_from_this());
+    buf = intToByte(clientId);
+    buf.reserve(buf.size() + manager.params().length() * 4);
+    for(auto f:manager.params().getParams())
+
+    asio::async_write(socket, asio::buffer(buf),
+                      [this, self](const asio::error_code &err, std::size_t) {
+
+                      });
 }

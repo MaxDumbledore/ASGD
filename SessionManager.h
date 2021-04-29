@@ -7,10 +7,16 @@
 
 #include <set>
 #include "Session.h"
+#include "Model.h"
+#include "GlobalParams.h"
 
 class SessionManager {
 public:
-    SessionManager() = default;
+    SessionManager();
+
+    int assignNewId();
+
+    GlobalParams &params();
 
     void start(const SessionPtr &s);
 
@@ -18,6 +24,8 @@ public:
 
 private:
     std::set<SessionPtr> sessions;
+    std::atomic_int curId;
+    GlobalParams globalParams;
 };
 
 

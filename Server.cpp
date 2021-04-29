@@ -5,6 +5,7 @@
 #include "Server.h"
 #include "Constants.h"
 #include <iostream>
+
 using namespace std;
 
 Server::Server(asio::io_context &ioContext, uint16_t port) :
@@ -20,13 +21,14 @@ Server::Server(asio::io_context &ioContext, uint16_t port) :
 }
 
 void Server::doAccept() {
-    tcpAcceptor.async_accept([this](const std::error_code &error, asio::ip::tcp::socket socket){
-        if (!error) {
+    tcpAcceptor.async_accept([this](const asio::error_code &error, asio::ip::tcp::socket socket) {
+        if (!err) {
             sessionManager.start(std::make_shared<Session>(sessionManager.assignNewId(),
                                                            asio::ssl::stream<asio::ip::tcp::socket>(std::move(socket),
-                                                                                                    sslContext)));
+                                                                                                    sslContext),
+                                                           sessionManager));
             doAccept();
         } else
-            std::cerr << error.message() << std::endl;
+            std::cerr << err.message() << std::endl;
     });
 }

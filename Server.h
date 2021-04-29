@@ -7,6 +7,7 @@
 
 #include <asio.hpp>
 #include <asio/ssl.hpp>
+#include "SessionManager.h"
 
 class Server {
 public:
