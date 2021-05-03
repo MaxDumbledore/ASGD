@@ -32,7 +32,7 @@ class Session : public std::enable_shared_from_this<Session> {
 
     void receiveUpdate();
 
-    void myDebug(const std::string& func, const asio::error_code& err);
+    void stepDebug(const std::string& func, const asio::error_code& err);
 };
 
 using SessionPtr = std::shared_ptr<Session>;

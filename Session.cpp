@@ -14,7 +14,7 @@ Session::Session(int clientId,
                  SessionManager& manager)
     : clientId(clientId), socket(std::move(socket)), manager(manager) {}
 
-void Session::myDebug(const std::string& func, const asio::error_code& err) {
+void Session::stepDebug(const std::string& func, const asio::error_code& err) {
     std::clog << "With Client " << clientId << ": " << func;
     if (err)
         std::clog << " failed because " << err.message() << std::endl;
@@ -32,7 +32,7 @@ void Session::handshake() {
     socket.async_handshake(
         asio::ssl::stream_base::server,
         [this, self, func = std::move(func)](const asio::error_code& err) {
-            myDebug(func, err);
+            stepDebug(func, err);
             if (!err)
                 sendIdAndInitialParams();
         });
@@ -49,7 +49,7 @@ void Session::sendIdAndInitialParams() {
     asio::async_write(socket, asio::buffer(buf),
                       [this, self, func = std::move(func)](
                           const asio::error_code& err, std::size_t) {
-                          myDebug(func, err);
+                          stepDebug(func, err);
                           if (!err)
                               receiveUpdate();
                       });
@@ -62,7 +62,7 @@ void Session::receiveUpdate() {
     asio::async_read(socket, asio::buffer(buf),
                      [this, self, func = std::move(func)](
                          const asio::error_code& err, std::size_t) {
-                         myDebug(func, err);
+                         stepDebug(func, err);
                          if (err)
                              return;
                          manager.params().update(
