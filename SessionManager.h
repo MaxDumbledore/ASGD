@@ -8,7 +8,7 @@
 #include <set>
 #include "Session.h"
 #include "Model.h"
-#include "GlobalParams.h"
+#include "Params.h"
 
 class SessionManager {
 public:
@@ -16,7 +16,7 @@ public:
 
     int assignNewId();
 
-    GlobalParams &params();
+    Params &params();
 
     void start(const SessionPtr &s);
 
@@ -25,7 +25,7 @@ public:
 private:
     std::set<SessionPtr> sessions;
     std::atomic_int curId;
-    GlobalParams globalParams;
+    Params globalParams;
 };
 
 

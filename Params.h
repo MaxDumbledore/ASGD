@@ -2,30 +2,34 @@
 // Created by 40461 on 2021/4/29.
 //
 
-#ifndef ASGD_GLOBALPARAMS_H
-#define ASGD_GLOBALPARAMS_H
+#ifndef ASGD_PARAMS_H
+#define ASGD_PARAMS_H
 
 #include <torch/torch.h>
 #include <shared_mutex>
 
-class GlobalParams {
+class Params {
 public:
-    GlobalParams() = default;
+    Params() = default;
 
-    void setParams(std::vector<at::Tensor> &&_params);
+    std::vector<at::Tensor> getData(const std::vector<std::vector<int64_t>> &dims) const;
+
+    std::vector<float> getData() const;
+
+    void setData(std::vector<float> &&_params);
+
+    void setData(std::vector<at::Tensor> &&_params);
 
     void update(const std::vector<at::Tensor> &delta);
 
-    std::vector<at::Tensor> getParams() const;
+    void update(const std::vector<float> &delta);
 
-    int length();
+    int size() const;
 
 private:
     mutable std::shared_mutex mutex;
 
-    std::vector<at::Tensor> params;
-
-    int n;
+    std::vector<float> params;
 };
 
-#endif //ASGD_GLOBALPARAMS_H
+#endif //ASGD_PARAMS_H

@@ -15,13 +15,13 @@ void SessionManager::stop(const SessionPtr &s) {
 }
 
 SessionManager::SessionManager() : curId(0) {
-    globalParams.setParams(MnistCNN().parameters());
+    globalParams.setData(MnistCNN().parameters());
 }
 
 int SessionManager::assignNewId() {
     return curId++;
 }
 
-GlobalParams &SessionManager::params() {
+Params &SessionManager::params() {
     return globalParams;
 }

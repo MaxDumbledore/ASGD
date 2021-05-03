@@ -11,24 +11,30 @@
 class SessionManager;
 
 class Session : public std::enable_shared_from_this<Session> {
-public:
-    Session(int clientID, asio::ssl::stream<asio::ip::tcp::socket> socket, SessionManager &manager);
+   public:
+    Session(int clientId,
+            asio::ssl::stream<asio::ip::tcp::socket> socket,
+            SessionManager& manager);
 
     void start();
 
     void stop();
 
-private:
-    int clientID;
+   private:
+    int clientId;
     asio::ssl::stream<asio::ip::tcp::socket> socket;
-    SessionManager &manager;
+    SessionManager& manager;
     std::string buf;
 
     void handshake();
 
-    void sendIdAndParams();
+    void sendIdAndInitialParams();
+
+    void receiveUpdate();
+
+    void myDebug(const std::string& func, const asio::error_code& err);
 };
 
 using SessionPtr = std::shared_ptr<Session>;
 
-#endif //ASGD_SESSION_H
+#endif  // ASGD_SESSION_H

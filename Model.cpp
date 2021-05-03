@@ -13,10 +13,10 @@ std::vector<at::Tensor> Model::getNoGradParams() const {
     return result;
 }
 
-void Model::setParams(const std::vector<at::Tensor> &_params) {
+void Model::setParams(std::vector<at::Tensor> &&_params) {
     int cur = 0;
     for (auto &m:net.parameters())
-        m.set_data(_params[cur++]);
+        m = _params[cur++];
 }
 
 void Model::train(std::pair<int, torch::data::Iterator<Batch>> iter) {

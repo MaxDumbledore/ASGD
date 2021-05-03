@@ -8,30 +8,42 @@
 #include <asio.hpp>
 #include <asio/ssl.hpp>
 #include "Model.h"
+#include "Params.h"
 
 class Client {
-public:
-    Client(const Dataset &trainSet, const TrainSampler &sampler, asio::io_context &ioContext);
+   public:
+    Client(const Dataset& trainSet,
+           const TrainSampler& sampler,
+           asio::io_context& ioContext);
 
-    void connect(const asio::ip::tcp::resolver::results_type &endpoints);
+    void connect(const asio::ip::tcp::resolver::results_type& endpoints);
 
     void start();
 
-private:
-    int rank;
+   private:
+    int id;
     TrainLoader trainLoader;
     std::pair<int, torch::data::Iterator<Batch>> iter;
     Model model;
+    Params builder;
     std::vector<at::Tensor> lastParams;
 
     asio::ssl::context sslContext;
     std::unique_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket;
     std::string buf;
+    std::vector<std::vector<int64_t>> dims;
+
+    void iterateOneBatch();
 
     void nextIter();
 
-    void handshake();
+    std::vector<at::Tensor> getCurrentUpdate() const;
+
+    bool handshake();
+
+    bool receiveIdAndInitialParams();
+
+    bool sendUpdate();
 };
 
-
-#endif //ASGD_CLIENT_H
+#endif  // ASGD_CLIENT_H

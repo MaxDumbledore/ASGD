@@ -1,10 +1,10 @@
-#include <iostream>
 #include <asio.hpp>
-#include "Server.h"
+#include <iostream>
 #include "Client.h"
 #include "Constants.h"
+#include "Server.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     try {
         if (argc <= 1 || (strcmp(argv[1], "-c") && strcmp(argv[1], "-s"))) {
             std::cerr << argv[1];
@@ -17,18 +17,27 @@ int main(int argc, char *argv[]) {
                 std::cerr << "Usage: -c <host> <port>\n";
                 return 1;
             }
-            auto trainSet(torch::data::datasets::MNIST(DATA_PATH).map(
-                    torch::data::transforms::Normalize<>(0.1307, 0.3081)).map(
-                    torch::data::transforms::Stack<>()));
-            auto testSet(torch::data::datasets::MNIST(DATA_PATH, torch::data::datasets::MNIST::Mode::kTest).map(
-                    torch::data::transforms::Normalize<>(0.1307, 0.3081)).map(torch::data::transforms::Stack<>()));
+            auto trainSet(
+                torch::data::datasets::MNIST(DATA_PATH)
+                    .map(torch::data::transforms::Normalize<>(0.1307, 0.3081))
+                    .map(torch::data::transforms::Stack<>()));
+            auto testSet(
+                torch::data::datasets::MNIST(
+                    DATA_PATH, torch::data::datasets::MNIST::Mode::kTest)
+                    .map(torch::data::transforms::Normalize<>(0.1307, 0.3081))
+                    .map(torch::data::transforms::Stack<>()));
 
-            std::cout << "Train Data Size: " << trainSet.size().value() << std::endl;
-            std::cout << "Test Data Size: " << testSet.size().value() << std::endl;
+            std::cout << "Train Data Size: " << trainSet.size().value()
+                      << std::endl;
+            std::cout << "Test Data Size: " << testSet.size().value()
+                      << std::endl;
 
             asio::ip::tcp::resolver resolver(ioContext);
             auto endpoints = resolver.resolve(argv[2], argv[3]);
-            auto client = new Client(trainSet, TrainSampler(trainSet.size().value(), PARTICIPATE_COUNT), ioContext);
+            auto client = new Client(
+                trainSet,
+                TrainSampler(trainSet.size().value(), PARTICIPATE_COUNT),
+                ioContext);
             client->connect(endpoints);
             client->start();
         } else {
@@ -37,9 +46,9 @@ int main(int argc, char *argv[]) {
                 return 1;
             }
             new Server(ioContext, std::stoi(argv[2]));
+            ioContext.run();
         }
-        ioContext.run();
-    } catch (std::exception &e) {
+    } catch (std::exception& e) {
         std::cerr << "Exception: " << e.what() << "\n";
     }
     return 0;

@@ -6,14 +6,20 @@
 #define ASGD_UTILS_H
 
 #include <string>
+#include <vector>
 
-std::string floatToBytes(const float &x);
+std::string floatToBytes(const float& x);
 
-float bytesToFloat(const std::string &s);
+float bytesToFloat(const std::string& s);
 
-std::string intToBytes(const int &x);
+std::string intToBytes(const int& x);
 
-int bytesToInt(const std::string &s);
+int bytesToInt(const std::string& s);
 
+std::vector<float> streamToFloatVec(const std::string& stream,
+                                    int sz,
+                                    int start = 0);
 
-#endif //ASGD_UTILS_H
+std::string floatVecToStream(const std::vector<float>& v);
+
+#endif  // ASGD_UTILS_H

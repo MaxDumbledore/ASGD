@@ -21,7 +21,7 @@ Server::Server(asio::io_context &ioContext, uint16_t port) :
 }
 
 void Server::doAccept() {
-    tcpAcceptor.async_accept([this](const asio::error_code &error, asio::ip::tcp::socket socket) {
+    tcpAcceptor.async_accept([this](const asio::error_code &err, asio::ip::tcp::socket socket) {
         if (!err) {
             sessionManager.start(std::make_shared<Session>(sessionManager.assignNewId(),
                                                            asio::ssl::stream<asio::ip::tcp::socket>(std::move(socket),

@@ -2,29 +2,50 @@
 // Created by 40461 on 2021/4/29.
 //
 
-#include "GlobalParams.h"
+#include "Params.h"
 
-void GlobalParams::update(const std::vector<at::Tensor> &delta) {
+void Params::update(const std::vector<at::Tensor> &delta) {
+    std::vector<float> temp;
+    for (auto &t:delta)
+        temp.insert(temp.end(), t.data_ptr<float>(), t.data_ptr<float>() + t.numel());
+    update(temp);
+}
+
+void Params::update(const std::vector<float> &delta) {
     std::unique_lock<std::shared_mutex> lock(mutex);
     for (int i = 0; i < delta.size(); i++)
         params[i] += delta[i];
 }
 
-std::vector<at::Tensor> GlobalParams::getParams() const {
+std::vector<float> Params::getData() const {
     std::shared_lock<std::shared_mutex> lock(mutex);
     return params;
 }
 
-void GlobalParams::setParams(std::vector<at::Tensor> &&_params) {
-    std::unique_lock<std::shared_mutex> lock(mutex);
-    n = 0;
-    for (auto &i:_params) {
-        i.set_requires_grad(false);
-        n += i.numel();
+std::vector<at::Tensor> Params::getData(const std::vector<std::vector<int64_t>> &dims) const {
+    auto temp = getData();
+    std::vector<at::Tensor> result;
+    result.reserve(dims.size());
+    int cur = 0;
+    for (auto &dim:dims) {
+        result.emplace_back(at::from_blob(temp.data() + cur, dim));
+        cur += (int) result.back().numel();
     }
+    return result;
+}
+
+void Params::setData(std::vector<at::Tensor> &&_params) {
+    std::vector<float> temp;
+    for (auto &t:_params)
+        temp.insert(temp.end(), t.data_ptr<float>(), t.data_ptr<float>() + t.numel());
+    setData(std::move(temp));
+}
+
+void Params::setData(std::vector<float> &&_params) {
+    std::unique_lock<std::shared_mutex> lock(mutex);
     params = std::move(_params);
 }
 
-int GlobalParams::length() {
-    return n;
+int Params::size() const{
+    return params.size();
 }
