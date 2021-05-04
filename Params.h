@@ -6,28 +6,34 @@
 #define ASGD_PARAMS_H
 
 #include <torch/torch.h>
-#include <shared_mutex>
+//#include <shared_mutex>
+
+/**
+ * @note for multi-thread
+ * if we use multi-thread for the IO-context, we need to use read-write mutex.
+ */
 
 class Params {
-public:
+   public:
     Params() = default;
 
-    std::vector<at::Tensor> getData(const std::vector<std::vector<int64_t>> &dims) const;
+    std::vector<at::Tensor> getData(
+        const std::vector<std::vector<int64_t>>& dims) const;
 
     std::vector<float> getData() const;
 
-    void setData(std::vector<float> &&_params);
+    void setData(std::vector<float>&& _params);
 
-    void setData(std::vector<at::Tensor> &&_params);
+    void setData(std::vector<at::Tensor>&& _params);
 
-    void update(const std::vector<float> &delta);
+    void update(const std::vector<float>& delta);
 
     int size() const;
 
-private:
-    mutable std::shared_mutex mutex;
+   private:
+    //    mutable std::shared_mutex mutex;
 
     std::vector<float> params;
 };
 
-#endif //ASGD_PARAMS_H
+#endif  // ASGD_PARAMS_H

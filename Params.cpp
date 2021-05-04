@@ -5,13 +5,13 @@
 #include "Params.h"
 
 void Params::update(const std::vector<float> &delta) {
-    std::unique_lock<std::shared_mutex> lock(mutex);
+//    std::unique_lock<std::shared_mutex> lock(mutex);
     for (int i = 0; i < params.size(); i++)
         params[i] += delta[i];
 }
 
 std::vector<float> Params::getData() const {
-    std::shared_lock<std::shared_mutex> lock(mutex);
+//    std::shared_lock<std::shared_mutex> lock(mutex);
     return params;
 }
 
@@ -35,7 +35,7 @@ void Params::setData(std::vector<at::Tensor> &&_params) {
 }
 
 void Params::setData(std::vector<float> &&_params) {
-    std::unique_lock<std::shared_mutex> lock(mutex);
+//    std::unique_lock<std::shared_mutex> lock(mutex);
     params = std::move(_params);
 }
 
