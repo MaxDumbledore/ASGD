@@ -4,24 +4,30 @@
 
 #include "SessionManager.h"
 
-void SessionManager::start(const SessionPtr &s) {
+void SessionManager::insert(const SessionPtr& s) {
     sessions.insert(s);
-    s->start();
 }
 
-void SessionManager::stop(const SessionPtr &s) {
+void SessionManager::startAll() {
+    for (auto& i : sessions)
+        i->start();
+}
+
+void SessionManager::stop(const SessionPtr& s) {
     s->stop();
     sessions.erase(s);
 }
 
-SessionManager::SessionManager() : curId(0) {
+SessionManager::SessionManager() : finishedCount() {
     globalParams.setData(MnistCNN().parameters());
 }
 
-int SessionManager::assignNewId() {
-    return curId++;
+Params& SessionManager::params() {
+    return globalParams;
 }
 
-Params &SessionManager::params() {
-    return globalParams;
+void SessionManager::triggerFinish(){
+    if(++finishedCount==sessions.size())
+        for(auto &i:sessions)
+            i->sendFinalParams();
 }

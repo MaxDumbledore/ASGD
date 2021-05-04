@@ -34,12 +34,11 @@ int main(int argc, char* argv[]) {
 
             asio::ip::tcp::resolver resolver(ioContext);
             auto endpoints = resolver.resolve(argv[2], argv[3]);
-            auto client = new Client(
-                trainSet,
-                TrainSampler(trainSet.size().value(), PARTICIPATE_COUNT),
-                ioContext);
+            auto client = new Client(trainSet, ioContext);
             client->connect(endpoints);
-            client->start();
+            client->start(&testSet);
+            std::clog << "Final Correctness: " << client->test(testSet)
+                      << std::endl;
         } else {
             if (argc != 3) {
                 std::cerr << "Usage: -s <port>\n";

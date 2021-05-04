@@ -15,11 +15,13 @@ Session::Session(int clientId,
     : clientId(clientId), socket(std::move(socket)), manager(manager) {}
 
 void Session::stepDebug(const std::string& func, const asio::error_code& err) {
+#ifdef DEBUG
     std::clog << "With Client " << clientId << ": " << func;
     if (err)
         std::clog << " failed because " << err.message() << std::endl;
     else
         std::clog << " succeeded!" << std::endl;
+#endif
 }
 
 void Session::start() {
@@ -45,7 +47,7 @@ void Session::stop() {
 void Session::sendIdAndInitialParams() {
     string func = __func__;
     auto self(shared_from_this());
-    buf += intToBytes(clientId) + floatVecToStream(manager.params().getData());
+    buf = intToBytes(clientId) + floatVecToStream(manager.params().getData());
     asio::async_write(socket, asio::buffer(buf),
                       [this, self, func = std::move(func)](
                           const asio::error_code& err, std::size_t) {
@@ -58,7 +60,7 @@ void Session::sendIdAndInitialParams() {
 void Session::receiveUpdate() {
     string func = __func__;
     auto self(shared_from_this());
-    buf.resize(manager.params().size() * 4);
+    buf.resize(manager.params().size() * 4 + 1);
     asio::async_read(socket, asio::buffer(buf),
                      [this, self, func = std::move(func)](
                          const asio::error_code& err, std::size_t) {
@@ -67,5 +69,34 @@ void Session::receiveUpdate() {
                              return;
                          manager.params().update(
                              streamToFloatVec(buf, manager.params().size()));
+                         if (buf.back() == 'C')
+                             sendParams();
+                         else
+                             manager.triggerFinish();
                      });
+}
+
+void Session::sendParams() {
+    string func = __func__;
+    auto self(shared_from_this());
+    buf = floatVecToStream(manager.params().getData());
+    asio::async_write(socket, asio::buffer(buf),
+                      [this, self, func = std::move(func)](
+                          const asio::error_code& err, std::size_t) {
+                          stepDebug(func, err);
+                          if (!err)
+                              receiveUpdate();
+                      });
+}
+
+void Session::sendFinalParams() {
+    string func = __func__;
+    auto self(shared_from_this());
+    buf = floatVecToStream(manager.params().getData());
+    asio::async_write(socket, asio::buffer(buf),
+                      [this, self, func = std::move(func)](
+                          const asio::error_code& err, std::size_t) {
+                          stepDebug(func, err);
+                          manager.stop(self);
+                      });
 }

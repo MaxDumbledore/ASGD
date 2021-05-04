@@ -20,6 +20,8 @@ class Session : public std::enable_shared_from_this<Session> {
 
     void stop();
 
+    void sendFinalParams();
+
    private:
     int clientId;
     asio::ssl::stream<asio::ip::tcp::socket> socket;
@@ -31,6 +33,8 @@ class Session : public std::enable_shared_from_this<Session> {
     void sendIdAndInitialParams();
 
     void receiveUpdate();
+    
+    void sendParams();
 
     void stepDebug(const std::string& func, const asio::error_code& err);
 };

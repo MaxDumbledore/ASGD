@@ -13,15 +13,17 @@
 class Client {
    public:
     Client(const Dataset& trainSet,
-           const TrainSampler& sampler,
            asio::io_context& ioContext);
 
     void connect(const asio::ip::tcp::resolver::results_type& endpoints);
 
-    void start();
+    void start(Dataset* testSet = nullptr);
+
+    double test(const Dataset& testSet);
 
    private:
     int id;
+    const Dataset& trainSet;
     TrainLoader trainLoader;
     std::pair<int, torch::data::Iterator<Batch>> iter;
     Model model;
@@ -33,9 +35,13 @@ class Client {
     std::string buf;
     std::vector<std::vector<int64_t>> dims;
 
-    void iterateOneBatch();
+    bool makeTrainLoader();
+
+    bool iterateOneBatch();
 
     void nextIter();
+
+    bool finished() const;
 
     std::vector<at::Tensor> getCurrentUpdate() const;
 
@@ -44,6 +50,8 @@ class Client {
     bool receiveIdAndInitialParams();
 
     bool sendUpdate();
+
+    bool receiveParams();
 };
 
 #endif  // ASGD_CLIENT_H

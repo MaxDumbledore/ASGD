@@ -5,17 +5,13 @@
 #include "Client.h"
 #include "Constants.h"
 #include "Utils.h"
+//#define DEBUG
 
-Client::Client(const Dataset& trainSet,
-               const TrainSampler& sampler,
-               asio::io_context& ioContext)
-    : id(-1),
-      trainLoader(torch::data::make_data_loader<Dataset, TrainSampler>(
-          trainSet,
-          sampler,
-          TRAIN_BATCH_SIZE)),
-      iter(0, trainLoader->begin()),
-      sslContext(asio::ssl::context::sslv23) {
+Client::Client(const Dataset& trainSet, asio::io_context& ioContext)
+    : trainSet(trainSet),
+      id(-1),
+      sslContext(asio::ssl::context::sslv23),
+      iter(-1, nullptr) {
     builder.setData(model.getNoGradParams());
     for (auto& i : model.getNoGradParams())
         dims.emplace_back(i.sizes().vec());
@@ -28,10 +24,26 @@ Client::Client(const Dataset& trainSet,
     socket->set_verify_mode(asio::ssl::verify_peer);
 }
 
-void Client::iterateOneBatch() {
+bool Client::makeTrainLoader() {
+    if (id < 0 || id >= PARTICIPATE_COUNT)
+        return false;
+    trainLoader = torch::data::make_data_loader<Dataset, TrainSampler>(
+        trainSet, TrainSampler(trainSet.size().value(), PARTICIPATE_COUNT, id),
+        TRAIN_BATCH_SIZE);
+    iter = {0, trainLoader->begin()};
+    return true;
+}
+
+bool Client::iterateOneBatch() {
+    if (finished())
+        return false;
     lastParams = model.getNoGradParams();
     model.train(iter);
+
+    //    std::clog << __func__ << ":Epoch " << iter.first << std::endl;
+
     nextIter();
+    return true;
 }
 
 void Client::nextIter() {
@@ -39,6 +51,10 @@ void Client::nextIter() {
         iter.second = trainLoader->begin();
         ++iter.first;
     }
+}
+
+bool Client::finished() const {
+    return iter.first == EPOCHS;
 }
 
 std::vector<at::Tensor> Client::getCurrentUpdate() const {
@@ -49,11 +65,13 @@ std::vector<at::Tensor> Client::getCurrentUpdate() const {
     return result;
 }
 
-void stepDebug(const std::string &func, const asio::error_code& err) {
+void stepDebug(const std::string& func, const asio::error_code& err) {
+#ifdef DEBUG
     if (err)
         std::cerr << func + " failed: " << err.message() << std::endl;
     else
         std::clog << func + " succeeded!" << std::endl;
+#endif
 }
 
 void Client::connect(
@@ -65,12 +83,24 @@ void Client::connect(
     stepDebug(__func__, err);
 }
 
-void Client::start() {
+void Client::start(Dataset* testSet) {
     if (handshake() && receiveIdAndInitialParams()) {
-        iterateOneBatch();
-        sendUpdate();
+        int cnt = 0;
+        do {
+            if (++cnt % 100 == 0) {
+                std::clog << "------" << cnt << "------" << std::endl;
+                if (testSet)
+                    std::clog << "Correctness: " << test(*testSet) << std::endl;
+            }
+        } while (iterateOneBatch() && sendUpdate() && receiveParams());
     }
     socket->shutdown();
+}
+
+double Client::test(const Dataset& testSet) {
+    TestLoader testLoader(
+        torch::data::make_data_loader(testSet, TEST_BATCH_SIZE));
+    return (double)model.matchCount(testLoader) / testSet.size().value();
 }
 
 bool Client::handshake() {
@@ -86,7 +116,8 @@ bool Client::receiveIdAndInitialParams() {
     asio::read(*socket, asio::buffer(buf), err);
     stepDebug(__func__, err);
     id = bytesToInt(buf.substr(0, 4));
-    builder.setData(streamToFloatVec(buf,builder.size(),4));
+    makeTrainLoader();
+    builder.setData(streamToFloatVec(buf, builder.size(), 4));
     model.setParams(builder.getData(dims));
     return !err.operator bool();
 }
@@ -94,8 +125,18 @@ bool Client::receiveIdAndInitialParams() {
 bool Client::sendUpdate() {
     asio::error_code err;
     builder.setData(getCurrentUpdate());
-    buf=floatVecToStream(builder.getData());
+    buf = floatVecToStream(builder.getData()) + (finished() ? 'S' : 'C');
     asio::write(*socket, asio::buffer(buf), err);
     stepDebug(__func__, err);
+    return !err.operator bool();
+}
+
+bool Client::receiveParams() {
+    asio::error_code err;
+    buf.resize(builder.size() * 4);
+    asio::read(*socket, asio::buffer(buf), err);
+    stepDebug(__func__, err);
+    builder.setData(streamToFloatVec(buf, builder.size()));
+    model.setParams(builder.getData(dims));
     return !err.operator bool();
 }

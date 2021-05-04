@@ -33,7 +33,7 @@ public:
 
     std::vector<at::Tensor> getNoGradParams() const;
 
-    void setParams(std::vector<at::Tensor> &&_params);
+    void setParams(const std::vector<at::Tensor> &_params);
 
     int matchCount(const TestLoader &testLoader);
 

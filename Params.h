@@ -20,8 +20,6 @@ public:
 
     void setData(std::vector<at::Tensor> &&_params);
 
-    void update(const std::vector<at::Tensor> &delta);
-
     void update(const std::vector<float> &delta);
 
     int size() const;

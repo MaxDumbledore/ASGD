@@ -1,0 +1,61 @@
+[
+{
+  "directory": "/home/max/CLionProjects/ASGD/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/max/asio-1.18.1/include -isystem /home/max/libtorch/include -isystem /home/max/libtorch/include/torch/csrc/api/include -isystem /home/max/SEAL/native/src -isystem /home/max/SEAL/build/native/src -isystem /home/max/SEAL/thirdparty/msgsl-src/include   -D_GLIBCXX_USE_CXX11_ABI=0 -g   -D_GLIBCXX_USE_CXX11_ABI=0 -pthread -std=gnu++17 -o CMakeFiles/ASGD.dir/main.cpp.o -c /home/max/CLionProjects/ASGD/main.cpp",
+  "file": "/home/max/CLionProjects/ASGD/main.cpp"
+},
+
+{
+  "directory": "/home/max/CLionProjects/ASGD/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/max/asio-1.18.1/include -isystem /home/max/libtorch/include -isystem /home/max/libtorch/include/torch/csrc/api/include -isystem /home/max/SEAL/native/src -isystem /home/max/SEAL/build/native/src -isystem /home/max/SEAL/thirdparty/msgsl-src/include   -D_GLIBCXX_USE_CXX11_ABI=0 -g   -D_GLIBCXX_USE_CXX11_ABI=0 -pthread -std=gnu++17 -o CMakeFiles/ASGD.dir/Constants.cpp.o -c /home/max/CLionProjects/ASGD/Constants.cpp",
+  "file": "/home/max/CLionProjects/ASGD/Constants.cpp"
+},
+
+{
+  "directory": "/home/max/CLionProjects/ASGD/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/max/asio-1.18.1/include -isystem /home/max/libtorch/include -isystem /home/max/libtorch/include/torch/csrc/api/include -isystem /home/max/SEAL/native/src -isystem /home/max/SEAL/build/native/src -isystem /home/max/SEAL/thirdparty/msgsl-src/include   -D_GLIBCXX_USE_CXX11_ABI=0 -g   -D_GLIBCXX_USE_CXX11_ABI=0 -pthread -std=gnu++17 -o CMakeFiles/ASGD.dir/MnistCNN.cpp.o -c /home/max/CLionProjects/ASGD/MnistCNN.cpp",
+  "file": "/home/max/CLionProjects/ASGD/MnistCNN.cpp"
+},
+
+{
+  "directory": "/home/max/CLionProjects/ASGD/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/max/asio-1.18.1/include -isystem /home/max/libtorch/include -isystem /home/max/libtorch/include/torch/csrc/api/include -isystem /home/max/SEAL/native/src -isystem /home/max/SEAL/build/native/src -isystem /home/max/SEAL/thirdparty/msgsl-src/include   -D_GLIBCXX_USE_CXX11_ABI=0 -g   -D_GLIBCXX_USE_CXX11_ABI=0 -pthread -std=gnu++17 -o CMakeFiles/ASGD.dir/Model.cpp.o -c /home/max/CLionProjects/ASGD/Model.cpp",
+  "file": "/home/max/CLionProjects/ASGD/Model.cpp"
+},
+
+{
+  "directory": "/home/max/CLionProjects/ASGD/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/max/asio-1.18.1/include -isystem /home/max/libtorch/include -isystem /home/max/libtorch/include/torch/csrc/api/include -isystem /home/max/SEAL/native/src -isystem /home/max/SEAL/build/native/src -isystem /home/max/SEAL/thirdparty/msgsl-src/include   -D_GLIBCXX_USE_CXX11_ABI=0 -g   -D_GLIBCXX_USE_CXX11_ABI=0 -pthread -std=gnu++17 -o CMakeFiles/ASGD.dir/Server.cpp.o -c /home/max/CLionProjects/ASGD/Server.cpp",
+  "file": "/home/max/CLionProjects/ASGD/Server.cpp"
+},
+
+{
+  "directory": "/home/max/CLionProjects/ASGD/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/max/asio-1.18.1/include -isystem /home/max/libtorch/include -isystem /home/max/libtorch/include/torch/csrc/api/include -isystem /home/max/SEAL/native/src -isystem /home/max/SEAL/build/native/src -isystem /home/max/SEAL/thirdparty/msgsl-src/include   -D_GLIBCXX_USE_CXX11_ABI=0 -g   -D_GLIBCXX_USE_CXX11_ABI=0 -pthread -std=gnu++17 -o CMakeFiles/ASGD.dir/Client.cpp.o -c /home/max/CLionProjects/ASGD/Client.cpp",
+  "file": "/home/max/CLionProjects/ASGD/Client.cpp"
+},
+
+{
+  "directory": "/home/max/CLionProjects/ASGD/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/max/asio-1.18.1/include -isystem /home/max/libtorch/include -isystem /home/max/libtorch/include/torch/csrc/api/include -isystem /home/max/SEAL/native/src -isystem /home/max/SEAL/build/native/src -isystem /home/max/SEAL/thirdparty/msgsl-src/include   -D_GLIBCXX_USE_CXX11_ABI=0 -g   -D_GLIBCXX_USE_CXX11_ABI=0 -pthread -std=gnu++17 -o CMakeFiles/ASGD.dir/SessionManager.cpp.o -c /home/max/CLionProjects/ASGD/SessionManager.cpp",
+  "file": "/home/max/CLionProjects/ASGD/SessionManager.cpp"
+},
+
+{
+  "directory": "/home/max/CLionProjects/ASGD/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/max/asio-1.18.1/include -isystem /home/max/libtorch/include -isystem /home/max/libtorch/include/torch/csrc/api/include -isystem /home/max/SEAL/native/src -isystem /home/max/SEAL/build/native/src -isystem /home/max/SEAL/thirdparty/msgsl-src/include   -D_GLIBCXX_USE_CXX11_ABI=0 -g   -D_GLIBCXX_USE_CXX11_ABI=0 -pthread -std=gnu++17 -o CMakeFiles/ASGD.dir/Session.cpp.o -c /home/max/CLionProjects/ASGD/Session.cpp",
+  "file": "/home/max/CLionProjects/ASGD/Session.cpp"
+},
+
+{
+  "directory": "/home/max/CLionProjects/ASGD/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/max/asio-1.18.1/include -isystem /home/max/libtorch/include -isystem /home/max/libtorch/include/torch/csrc/api/include -isystem /home/max/SEAL/native/src -isystem /home/max/SEAL/build/native/src -isystem /home/max/SEAL/thirdparty/msgsl-src/include   -D_GLIBCXX_USE_CXX11_ABI=0 -g   -D_GLIBCXX_USE_CXX11_ABI=0 -pthread -std=gnu++17 -o CMakeFiles/ASGD.dir/Params.cpp.o -c /home/max/CLionProjects/ASGD/Params.cpp",
+  "file": "/home/max/CLionProjects/ASGD/Params.cpp"
+},
+
+{
+  "directory": "/home/max/CLionProjects/ASGD/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/max/asio-1.18.1/include -isystem /home/max/libtorch/include -isystem /home/max/libtorch/include/torch/csrc/api/include -isystem /home/max/SEAL/native/src -isystem /home/max/SEAL/build/native/src -isystem /home/max/SEAL/thirdparty/msgsl-src/include   -D_GLIBCXX_USE_CXX11_ABI=0 -g   -D_GLIBCXX_USE_CXX11_ABI=0 -pthread -std=gnu++17 -o CMakeFiles/ASGD.dir/Utils.cpp.o -c /home/max/CLionProjects/ASGD/Utils.cpp",
+  "file": "/home/max/CLionProjects/ASGD/Utils.cpp"
+}
+]

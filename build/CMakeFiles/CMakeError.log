@@ -1,0 +1,48 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/max/CLionProjects/ASGD/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_6e606 && [1/2] Building C object CMakeFiles/cmTC_6e606.dir/src.c.o
+[2/2] Linking C executable cmTC_6e606
+FAILED: cmTC_6e606 
+: && /bin/x86_64-linux-gnu-gcc-9 -DCMAKE_HAVE_LIBC_PTHREAD   CMakeFiles/cmTC_6e606.dir/src.c.o  -o cmTC_6e606   && :
+/usr/bin/ld: CMakeFiles/cmTC_6e606.dir/src.c.o: in function `main':
+src.c:(.text+0x46): undefined reference to `pthread_create'
+/usr/bin/ld: src.c:(.text+0x52): undefined reference to `pthread_detach'
+/usr/bin/ld: src.c:(.text+0x63): undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+#include <pthread.h>
+
+void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/max/CLionProjects/ASGD/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_689ae && [1/2] Building C object CMakeFiles/cmTC_689ae.dir/CheckFunctionExists.c.o
+[2/2] Linking C executable cmTC_689ae
+FAILED: cmTC_689ae 
+: && /bin/x86_64-linux-gnu-gcc-9 -DCHECK_FUNCTION_EXISTS=pthread_create   CMakeFiles/cmTC_689ae.dir/CheckFunctionExists.c.o  -o cmTC_689ae  -lpthreads && :
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+
+

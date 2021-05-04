@@ -4,16 +4,9 @@
 
 #include "Params.h"
 
-void Params::update(const std::vector<at::Tensor> &delta) {
-    std::vector<float> temp;
-    for (auto &t:delta)
-        temp.insert(temp.end(), t.data_ptr<float>(), t.data_ptr<float>() + t.numel());
-    update(temp);
-}
-
 void Params::update(const std::vector<float> &delta) {
     std::unique_lock<std::shared_mutex> lock(mutex);
-    for (int i = 0; i < delta.size(); i++)
+    for (int i = 0; i < params.size(); i++)
         params[i] += delta[i];
 }
 
@@ -28,7 +21,7 @@ std::vector<at::Tensor> Params::getData(const std::vector<std::vector<int64_t>> 
     result.reserve(dims.size());
     int cur = 0;
     for (auto &dim:dims) {
-        result.emplace_back(at::from_blob(temp.data() + cur, dim));
+        result.emplace_back(at::from_blob(temp.data() + cur, dim).clone().detach());
         cur += (int) result.back().numel();
     }
     return result;
