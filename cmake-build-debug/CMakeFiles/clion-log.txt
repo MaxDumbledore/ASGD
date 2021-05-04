@@ -1,6 +1,0 @@
-/usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/max/CLionProjects/ASGD
--- Microsoft SEAL -> Version 3.6.4 detected
--- Microsoft SEAL -> Targets available: SEAL::seal
--- Configuring done
--- Generating done
--- Build files have been written to: /home/max/CLionProjects/ASGD/cmake-build-debug
