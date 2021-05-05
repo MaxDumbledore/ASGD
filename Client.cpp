@@ -12,7 +12,7 @@ Client::Client(const Dataset& trainSet, asio::io_context& ioContext)
       id(-1),
       sslContext(asio::ssl::context::sslv23),
       iter(-1, nullptr) {
-    builder.setData(model.getNoGradParams());
+    helper.setData(model.getNoGradParams());
     for (auto& i : model.getNoGradParams())
         dims.emplace_back(i.sizes().vec());
     sslContext.use_certificate_chain_file(CERT_PATH + "client.pem");
@@ -112,20 +112,20 @@ bool Client::handshake() {
 
 bool Client::receiveIdAndInitialParams() {
     asio::error_code err;
-    buf.resize(4 + builder.size() * 4);
+    buf.resize(4 + helper.size() * 4);
     asio::read(*socket, asio::buffer(buf), err);
     stepDebug(__func__, err);
     id = bytesToInt(buf.substr(0, 4));
     makeTrainLoader();
-    builder.setData(streamToFloatVec(buf, builder.size(), 4));
-    model.setParams(builder.getData(dims));
+    helper.setData(streamToFloatVec(buf, helper.size(), 4));
+    model.setParams(helper.getData(dims));
     return !err.operator bool();
 }
 
 bool Client::sendUpdate() {
     asio::error_code err;
-    builder.setData(getCurrentUpdate());
-    buf = floatVecToStream(builder.getData()) + (finished() ? 'S' : 'C');
+    helper.setData(getCurrentUpdate());
+    buf = floatVecToStream(helper.getData()) + (finished() ? 'S' : 'C');
     asio::write(*socket, asio::buffer(buf), err);
     stepDebug(__func__, err);
     return !err.operator bool();
@@ -133,10 +133,14 @@ bool Client::sendUpdate() {
 
 bool Client::receiveParams() {
     asio::error_code err;
-    buf.resize(builder.size() * 4);
+    buf.resize(helper.size() * 4);
     asio::read(*socket, asio::buffer(buf), err);
     stepDebug(__func__, err);
-    builder.setData(streamToFloatVec(buf, builder.size()));
-    model.setParams(builder.getData(dims));
+    helper.setData(streamToFloatVec(buf, helper.size()));
+    model.setParams(helper.getData(dims));
     return !err.operator bool();
 }
+
+ const Params & Client::getHelper() const{
+     return helper;
+ }

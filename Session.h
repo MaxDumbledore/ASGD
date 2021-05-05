@@ -36,6 +36,8 @@ class Session : public std::enable_shared_from_this<Session> {
     
     void sendParams();
 
+    void asyncUpdate(std::vector<float> &&vec);
+
     void stepDebug(const std::string& func, const asio::error_code& err);
 };
 

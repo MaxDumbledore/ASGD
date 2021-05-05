@@ -28,13 +28,11 @@ class SessionManager {
 
     void stop(const SessionPtr& s);
 
-    void triggerFinish();
+    void finishAll();
 
    private:
     std::set<SessionPtr> sessions;
     Params globalParams;
-    int finishedCount;
-    void allSendFinalParams();
 };
 
 #endif  // ASGD_SESSIONMANAGER_H

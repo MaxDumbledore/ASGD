@@ -18,7 +18,7 @@ void SessionManager::stop(const SessionPtr& s) {
     sessions.erase(s);
 }
 
-SessionManager::SessionManager() : finishedCount() {
+SessionManager::SessionManager() {
     globalParams.setData(MnistCNN().parameters());
 }
 
@@ -26,8 +26,7 @@ Params& SessionManager::params() {
     return globalParams;
 }
 
-void SessionManager::triggerFinish(){
-    if(++finishedCount==sessions.size())
-        for(auto &i:sessions)
-            i->sendFinalParams();
+void SessionManager::finishAll() {
+    for (auto& i : sessions)
+        i->sendFinalParams();
 }

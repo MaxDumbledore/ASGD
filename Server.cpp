@@ -1,7 +1,3 @@
-//
-// Created by max on 2021/4/23.
-//
-
 #include "Server.h"
 #include <iostream>
 #include "Constants.h"
@@ -11,8 +7,7 @@ using namespace std;
 Server::Server(asio::io_context& ioContext, uint16_t port)
     : tcpAcceptor(ioContext,
                   asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)),
-      sslContext(asio::ssl::context::sslv23),
-      startedCount() {
+      sslContext(asio::ssl::context::sslv23) {
     sslContext.set_options(asio::ssl::context::default_workarounds |
                            asio::ssl::context::no_sslv2);
     sslContext.use_certificate_chain_file(CERT_PATH + "server.pem");
@@ -22,6 +17,21 @@ Server::Server(asio::io_context& ioContext, uint16_t port)
                                asio::ssl::verify_fail_if_no_peer_cert);
     sslContext.load_verify_file(CERT_PATH + "ca.pem");
     doAccept();
+    ioContext.run();
+    std::clog<<"Accept finished!"<<std::endl;
+
+    ioContext.restart();
+    sessionManager.startAll();
+    ioContext.run();
+    std::clog<<"Session finished!"<<std::endl;
+
+    ioContext.restart();
+    sessionManager.finishAll();
+    ioContext.run();
+    std::clog<<"Send Result finished!"<<std::endl;
+
+    // for(int i=0;i<100;i++)
+        // std::clog<<sessionManager.params().getData()[i]<<std::endl;
 }
 
 void Server::doAccept() {
@@ -34,8 +44,6 @@ void Server::doAccept() {
                     asio::ssl::stream<asio::ip::tcp::socket>(std::move(socket),
                                                              sslContext),
                     sessionManager));
-                if (++startedCount == PARTICIPATE_COUNT)
-                    sessionManager.startAll();
             } else
                 std::cerr << err.message() << std::endl;
         });

@@ -39,13 +39,14 @@ int main(int argc, char* argv[]) {
             client->start(&testSet);
             std::clog << "Final Correctness: " << client->test(testSet)
                       << std::endl;
+        //    for (int i = 0; i < 100; i++)
+        //        std::clog << client->getHelper().getData()[i] << std::endl;
         } else {
             if (argc != 3) {
                 std::cerr << "Usage: -s <port>\n";
                 return 1;
             }
             new Server(ioContext, std::stoi(argv[2]));
-            ioContext.run();
         }
     } catch (std::exception& e) {
         std::cerr << "Exception: " << e.what() << "\n";

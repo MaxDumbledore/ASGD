@@ -21,13 +21,15 @@ class Client {
 
     double test(const Dataset& testSet);
 
+    const Params & getHelper() const;
+
    private:
     int id;
     const Dataset& trainSet;
     TrainLoader trainLoader;
     std::pair<int, torch::data::Iterator<Batch>> iter;
     Model model;
-    Params builder;
+    Params helper;
     std::vector<at::Tensor> lastParams;
 
     asio::ssl::context sslContext;
