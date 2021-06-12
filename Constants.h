@@ -16,5 +16,4 @@ extern const int EPOCHS;
 extern const double LEARNING_RATE;
 extern const double MOMENTUM;
 
-
-#endif //ASGD_CONSTANTS_H
+#endif  // ASGD_CONSTANTS_H

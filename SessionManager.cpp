@@ -18,6 +18,12 @@ void SessionManager::stop(const SessionPtr& s) {
     sessions.erase(s);
 }
 
+/**
+ * @brief Construct a new Session Manager:: Session Manager object
+ * Remind that in original article we need the participate 0 to generate initial
+ * message. For convenience we just let Server to do that.
+ */
+
 SessionManager::SessionManager() {
     globalParams.setData(MnistCNN().parameters());
 }

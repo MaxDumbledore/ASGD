@@ -3,9 +3,13 @@
 //
 
 #include "Client.h"
+#include <random>
 #include "Constants.h"
 #include "Utils.h"
 //#define DEBUG
+
+// If the macro DEBUG is defined, the message of intermediate process will be
+// print.
 
 Client::Client(const Dataset& trainSet, asio::io_context& ioContext)
     : trainSet(trainSet),
@@ -15,6 +19,9 @@ Client::Client(const Dataset& trainSet, asio::io_context& ioContext)
     helper.setData(model.getNoGradParams());
     for (auto& i : model.getNoGradParams())
         dims.emplace_back(i.sizes().vec());
+
+    // load certifications and construct socket.
+
     sslContext.use_certificate_chain_file(CERT_PATH + "client.pem");
     sslContext.use_private_key_file(CERT_PATH + "client.pem",
                                     asio::ssl::context::pem);
@@ -23,6 +30,14 @@ Client::Client(const Dataset& trainSet, asio::io_context& ioContext)
         ioContext, sslContext);
     socket->set_verify_mode(asio::ssl::verify_peer);
 }
+
+/**
+ * @brief make the member trainLoader
+ * Using DistributedRandomSampler to divide dataset into equal parts and sample
+ * a batch randomly every time.
+ * @return true if no error occur.
+ * @return false if id is not correct.
+ */
 
 bool Client::makeTrainLoader() {
     if (id < 0 || id >= PARTICIPATE_COUNT)
@@ -37,7 +52,8 @@ bool Client::makeTrainLoader() {
 bool Client::iterateOneBatch() {
     if (finished())
         return false;
-    lastParams = model.getNoGradParams();
+    lastParams = model.getNoGradParams();  // save the former parameters for
+                                           // calculating the update value.
     model.train(iter);
 
     //    std::clog << __func__ << ":Epoch " << iter.first << std::endl;
@@ -65,6 +81,12 @@ std::vector<at::Tensor> Client::getCurrentUpdate() const {
     return result;
 }
 
+/**
+ * @brief a debug function for printing message of intermediate process.
+ *
+ * @param func
+ * @param err
+ */
 void stepDebug(const std::string& func, const asio::error_code& err) {
 #ifdef DEBUG
     if (err)
@@ -83,14 +105,35 @@ void Client::connect(
     stepDebug(__func__, err);
 }
 
+#define RANDOM_DELAY
+
+// If the macro RANDOM_DELAY is defined then every time before training the
+// process waits for a random time interval. This is for estimulating the
+// real network environment.
+
 void Client::start(Dataset* testSet) {
+    clock_t start = clock(), g = 0;
     if (handshake() && receiveIdAndInitialParams()) {
+#ifdef RANDOM_DELAY
+        static std::random_device rd;
+        static std::mt19937 e(rd());
+        std::uniform_int_distribution<int> dist(0, 100);
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(dist(e)));  //休眠100毫秒
+#endif
         int cnt = 0;
         do {
-            if (++cnt % 100 == 0) {
-                std::clog << "------" << cnt << "------" << std::endl;
-                if (testSet)
-                    std::clog << "Correctness: " << test(*testSet) << std::endl;
+            if (++cnt % 50 == 0) {
+                // std::clog << "------" << cnt << "------" << std::endl;
+                if (testSet) {
+                    auto d = clock();
+                    //  std::clog << "Correctness: " << test(*testSet) <<
+                    //  std::endl;
+                    g += (clock() - d);
+                }
+                std::clog /* << "TimeCost: "*/
+                    << (double)(clock() - start - g) / CLOCKS_PER_SEC
+                    << std::endl;
             }
         } while (iterateOneBatch() && sendUpdate() && receiveParams());
     }
@@ -141,6 +184,6 @@ bool Client::receiveParams() {
     return !err.operator bool();
 }
 
- const Params & Client::getHelper() const{
-     return helper;
- }
+const Params& Client::getHelper() const {
+    return helper;
+}

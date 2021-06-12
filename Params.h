@@ -9,6 +9,9 @@
 //#include <shared_mutex>
 
 /**
+ * @brief class Params is used for the transformation between float vector and
+ * parameters. Also in Server we use Params to maintain the global parameters.
+ *
  * @note for multi-thread
  * if we use multi-thread for the IO-context, we need to use read-write mutex.
  */

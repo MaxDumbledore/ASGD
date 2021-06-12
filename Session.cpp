@@ -9,6 +9,9 @@
 //#define DEBUG
 using namespace std;
 
+// If the macro DEBUG is defined, the message of intermediate process will be
+// print.
+
 Session::Session(int clientId,
                  asio::ssl::stream<asio::ip::tcp::socket> socket,
                  SessionManager& manager)
@@ -44,6 +47,11 @@ void Session::stop() {
     socket.shutdown();
 }
 
+/**
+ * @brief give ID to every participant, and send initial parameters.
+ *
+ */
+
 void Session::sendIdAndInitialParams() {
     string func = __func__;
     auto self(shared_from_this());
@@ -56,6 +64,13 @@ void Session::sendIdAndInitialParams() {
                               receiveUpdate();
                       });
 }
+
+/**
+ * @brief recive updates and the state message.
+ * if the state message is 'C', then the client has more batches to train, so
+ * server continuely send parameters. if the state message is 'S', then the
+ * client runs out of its batches, suspend this session.
+ */
 
 void Session::receiveUpdate() {
     string func = __func__;
@@ -74,14 +89,22 @@ void Session::receiveUpdate() {
         });
 }
 
+/**
+ * @brief update the global parameters asynchronously
+ * push the update function into the back of io_context object, so only after
+ * other functions in io_context are completed, the update() can be implemented.
+ * @param vec
+ */
+
 void Session::asyncUpdate(std::vector<float>&& vec) {
     string func = __func__;
     auto self(shared_from_this());
-    //std::clog<<"---post---"<<clientId<<std::endl;
-    asio::post(socket.get_executor(), [this, self, vec = std::move(vec), func = std::move(func)]() {
-        manager.params().update(vec);
-        stepDebug(func, asio::error_code());
-    });
+    // std::clog<<"---post---"<<clientId<<std::endl;
+    asio::post(socket.get_executor(),
+               [this, self, vec = std::move(vec), func = std::move(func)]() {
+                   manager.params().update(vec);
+                   stepDebug(func, asio::error_code());
+               });
 }
 
 void Session::sendParams() {
@@ -105,7 +128,7 @@ void Session::sendFinalParams() {
     asio::async_write(socket, asio::buffer(buf),
                       [this, self, func = std::move(func)](
                           const asio::error_code& err, std::size_t) {
-                        //   stepDebug(func, err);
+                          //   stepDebug(func, err);
                           manager.stop(self);
                       });
 }

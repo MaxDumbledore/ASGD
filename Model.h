@@ -9,6 +9,8 @@
 #include "MnistCNN.h"
 #include "cxxabi.h"
 
+//a tool function to print specific type name of an object.
+
 template<typename T>
 void getType(const T &x) {
 #define quote(x) #x
@@ -17,6 +19,9 @@ void getType(const T &x) {
     std::cerr << temp << "\t" << quote(x) << std::endl;
     free(temp);
 }
+
+//It drives me crazy when writing all these complete type name.
+//If I don't use these specfic type name, our code will have templates everywhere, which I can't stand.
 
 using Batch = torch::data::Example<at::Tensor, at::Tensor>;
 using Dataset = torch::data::datasets::MapDataset<torch::data::datasets::MapDataset<torch::data::datasets::MNIST, torch::data::transforms::Normalize<at::Tensor> >, torch::data::transforms::Stack<Batch> >;

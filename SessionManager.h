@@ -13,7 +13,7 @@
 /**
  * @note this class is not thread-safe
  * Attention! if we use multi-thread for the IO-context, we need to make
- * sessions thread-safe, and make finishedCount an automic Integer.
+ * sessions thread-safe.
  */
 
 class SessionManager {

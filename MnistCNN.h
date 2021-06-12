@@ -8,6 +8,11 @@
 
 #include <torch/torch.h>
 
+/**
+ * @brief an implementation of the neural network for training
+ * Refer to https://github.com/pytorch/examples/tree/master/cpp/mnist
+ */
+
 class MnistCNN : public torch::nn::Module {
 public:
 

@@ -2,9 +2,14 @@
 // Created by 40461 on 2021/4/29.
 //
 
+#include "Utils.h"
 #include <arpa/inet.h>
 #include <cstring>
-#include "Utils.h"
+
+/**
+ * @brief use union to convert among float ,integer and byte.
+ *
+ */
 
 union Change {
     float g;
@@ -15,7 +20,7 @@ union Change {
 std::string floatToBytes(const float& x) {
     Change t;
     t.g = x;
-    t.d = htonl(t.d);
+    t.d = htonl(t.d);  // care with the endian!
     return std::string(t.data, t.data + 4);
 }
 
