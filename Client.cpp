@@ -153,6 +153,14 @@ bool Client::handshake() {
     return !err.operator bool();
 }
 
+/**
+ * @brief receive Id and initial parameters from Server.
+ * Id : integer -- 4 bytes
+ * parameters : vector<float>, float is reprensent by 4 bytes
+ * @return true
+ * @return false
+ */
+
 bool Client::receiveIdAndInitialParams() {
     asio::error_code err;
     buf.resize(4 + helper.size() * 4);
@@ -164,6 +172,14 @@ bool Client::receiveIdAndInitialParams() {
     model.setParams(helper.getData(dims));
     return !err.operator bool();
 }
+
+/**
+ * @brief send update for current batch, with a state message
+ * update : vector<float>
+ * state message : 'C' or 'S' means whether the batches run out.
+ * @return true
+ * @return false
+ */
 
 bool Client::sendUpdate() {
     asio::error_code err;

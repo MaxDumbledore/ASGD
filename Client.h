@@ -10,10 +10,15 @@
 #include "Model.h"
 #include "Params.h"
 
+/**
+ * @brief Client
+ * We use synchronous communication in Client because every step should be
+ * ordered.
+ */
+
 class Client {
    public:
-    Client(const Dataset& trainSet,
-           asio::io_context& ioContext);
+    Client(const Dataset& trainSet, asio::io_context& ioContext);
 
     void connect(const asio::ip::tcp::resolver::results_type& endpoints);
 
@@ -21,7 +26,7 @@ class Client {
 
     double test(const Dataset& testSet);
 
-    const Params & getHelper() const;
+    const Params& getHelper() const;
 
    private:
     int id;
